@@ -1,6 +1,6 @@
 1.	Seleziona gli utenti che hanno postato almeno un video
 
-SELECT DISTINCT users.username, medias.`type`
+SELECT DISTINCT users.username, medias.`type`, users.id 
 FROM users
 INNER JOIN medias
 ON users.id = medias.user_id 
@@ -8,9 +8,19 @@ WHERE medias.`type` = 'video';
 
 2.	Seleziona tutti i post senza Like (13)
 
+Metodo 1:
+
 SELECT *
 FROM posts
 WHERE NOT EXISTS (SELECT likes.post_id FROM likes WHERE likes.post_id = posts.id);
+
+Metodo 2:
+
+SELECT *
+FROM posts
+LEFT JOIN likes
+ON posts.id = likes.post_id 
+WHERE likes.post_id IS NULL;
 
 3.	Conta il numero di like per ogni post (165)
 
@@ -29,7 +39,7 @@ ORDER BY total_media ASC;
 
 5.	Ordina gli utenti per totale di likes ricevuti nei loro posts (25) 
 
-SELECT users.username , count(user_id) AS total_like
+SELECT users.username, count(user_id) AS total_like
 FROM likes
 INNER JOIN users
 ON likes.user_id = users.id 
